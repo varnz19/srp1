@@ -6,7 +6,8 @@ function ok(res, data, meta = {}) {
 
 export async function trendingMovies(req, res, next) {
   try {
-    const items = await getTrendingMovies();
+    const page = parseInt(req.query.page) || Math.floor(Math.random() * 5) + 1;
+    const items = await getTrendingMovies(page);
     ok(res, items, { source: 'movies.trending' });
   } catch (error) {
     next(error);
@@ -15,7 +16,8 @@ export async function trendingMovies(req, res, next) {
 
 export async function popularMovies(req, res, next) {
   try {
-    const items = await getPopularMovies();
+    const page = parseInt(req.query.page) || Math.floor(Math.random() * 5) + 1;
+    const items = await getPopularMovies(page);
     ok(res, items, { source: 'movies.popular' });
   } catch (error) {
     next(error);
@@ -24,7 +26,8 @@ export async function popularMovies(req, res, next) {
 
 export async function trendingTv(req, res, next) {
   try {
-    const items = await getTrendingTv();
+    const page = parseInt(req.query.page) || Math.floor(Math.random() * 5) + 1;
+    const items = await getTrendingTv(page);
     ok(res, items, { source: 'tv.trending' });
   } catch (error) {
     next(error);

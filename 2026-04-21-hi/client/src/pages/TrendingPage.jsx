@@ -1,4 +1,5 @@
 import { Flame, RefreshCw } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import Button from '../components/Button.jsx';
 import ContentCard from '../components/ContentCard.jsx';
@@ -15,24 +16,25 @@ export default function TrendingPage() {
     setLoading(true);
     if (type === 'tv') {
       const { data } = await api.get('/tv/trending');
-      setItems(data.data || []);
+      setItems([...(data.data || [])].sort(() => Math.random() - 0.5));
       setLoading(false);
       return;
     }
     if (type === 'movie') {
       const { data } = await api.get('/movies/trending');
-      setItems(data.data || []);
+      setItems([...(data.data || [])].sort(() => Math.random() - 0.5));
       setLoading(false);
       return;
     }
     if (type === 'all') {
       const [movies, tv] = await Promise.all([api.get('/movies/trending'), api.get('/tv/trending')]);
-      setItems([...(movies.data.data || []), ...(tv.data.data || [])].slice(0, 24));
+      const combined = [...(movies.data.data || []), ...(tv.data.data || [])].slice(0, 24);
+      setItems(combined.sort(() => Math.random() - 0.5));
       setLoading(false);
       return;
     }
     const { data } = await api.get('/content/trending', { params: { type } });
-    setItems(data.trending || []);
+    setItems([...(data.trending || [])].sort(() => Math.random() - 0.5));
     setLoading(false);
   }
 
@@ -74,9 +76,11 @@ export default function TrendingPage() {
         ))}
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {items.map((item) => (
-          <ContentCard key={item._id} item={item} onSave={save} onDismiss={dismiss} />
-        ))}
+        <AnimatePresence>
+          {items.map((item) => (
+            <ContentCard key={item._id || Math.random()} item={item} onSave={save} onDismiss={dismiss} />
+          ))}
+        </AnimatePresence>
       </div>
     </div>
   );

@@ -7,7 +7,8 @@ import {
   listContent,
   searchContent,
   trending,
-  updateWatchlist
+  updateWatchlist,
+  newReleases
 } from '../controllers/contentController.js';
 import { protect } from '../middleware/auth.js';
 
@@ -16,6 +17,7 @@ const router = Router();
 router.get('/', protect, listContent);
 router.get('/search', protect, searchContent);
 router.get('/trending', protect, trending);
+router.get('/new-releases', protect, newReleases);
 router.get('/discover', protect, discoverContent);
 router.post('/import', protect, importExternalContent);
 router.get('/watchlist', protect, getWatchlist);

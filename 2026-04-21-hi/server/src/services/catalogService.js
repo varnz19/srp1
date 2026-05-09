@@ -45,22 +45,28 @@ export async function getCatalogList({ type, source, limit = 20, sort = { popula
   return Content.find(filter).sort(sort).limit(limit);
 }
 
-export async function getTrendingMovies() {
-  const imported = await fetchTmdbCollection('trending', 'movie');
-  if (imported.length) await upsertCatalogItems(imported);
-  return getCatalogList({ type: 'movie', limit: 20 });
+export async function getTrendingMovies(page = 1) {
+  const imported = await fetchTmdbCollection('trending', 'movie', page);
+  if (imported.length) {
+    return await upsertCatalogItems(imported);
+  }
+  return imported;
 }
 
-export async function getPopularMovies() {
-  const imported = await fetchTmdbCollection('popular', 'movie');
-  if (imported.length) await upsertCatalogItems(imported);
-  return getCatalogList({ type: 'movie', limit: 20 });
+export async function getPopularMovies(page = 1) {
+  const imported = await fetchTmdbCollection('popular', 'movie', page);
+  if (imported.length) {
+    return await upsertCatalogItems(imported);
+  }
+  return imported;
 }
 
-export async function getTrendingTv() {
-  const imported = await fetchTmdbCollection('trending', 'tv');
-  if (imported.length) await upsertCatalogItems(imported);
-  return getCatalogList({ type: 'tv', limit: 20 });
+export async function getTrendingTv(page = 1) {
+  const imported = await fetchTmdbCollection('trending', 'tv', page);
+  if (imported.length) {
+    return await upsertCatalogItems(imported);
+  }
+  return imported;
 }
 
 export async function getMovieDetails(id) {
@@ -101,6 +107,8 @@ export async function searchUnifiedCatalog(query, type = 'all') {
     type === 'music' || type === 'all' ? searchSpotify(query).catch(() => []) : []
   ]);
   const storedImported = await upsertCatalogItems([...tmdbImported, ...tvImported, ...movieImported]);
-  return dedupe([...local.map((item) => item.toObject()), ...storedImported.map((item) => item.toObject())])
+  const combined = dedupe([...storedImported.map((item) => item.toObject()), ...local.map((item) => item.toObject())])
     .filter((item) => type === 'all' || !type || item.type === type);
+    
+  return combined.sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
 }

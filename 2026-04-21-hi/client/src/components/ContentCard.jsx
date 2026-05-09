@@ -6,16 +6,28 @@ import { asPoster } from '../lib/api.js';
 
 export default function ContentCard({ item, onSave, onDismiss, compact = false }) {
   const [isLoved, setIsLoved] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const detailsUrl = item._id ? `/content/${item._id}` : null;
   const PosterWrapper = detailsUrl ? Link : 'div';
+  
+  const directors = item.directors || [];
+  const cast = item.cast || [];
+  const stringPeople = item.people && !directors.length && !cast.length ? item.people : [];
 
   const handleLove = (e) => {
     e.preventDefault();
-    if (isLoved) return;
-    setIsLoved(true);
-    setTimeout(() => {
-      onSave?.(item, 'favorite');
-    }, 500); // Allow animation to play before unmounting
+    const nextState = !isLoved;
+    setIsLoved(nextState);
+    if (nextState) setIsSaved(false);
+    onSave?.(item, nextState ? 'favorite' : 'none');
+  };
+
+  const handleSave = (e) => {
+    e.preventDefault();
+    const nextState = !isSaved;
+    setIsSaved(nextState);
+    if (nextState) setIsLoved(false);
+    onSave?.(item, nextState ? 'saved' : 'none');
   };
   return (
     <motion.article
@@ -43,6 +55,29 @@ export default function ContentCard({ item, onSave, onDismiss, compact = false }
             <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-white/80 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
               {item.reason || item.overview || 'No description available.'}
             </p>
+            
+            {(directors.length > 0 || cast.length > 0 || stringPeople.length > 0) && (
+              <div className="mt-4 flex flex-col gap-2 opacity-0 transition-opacity duration-700 group-hover:opacity-100">
+                <div className="text-[10px] font-bold uppercase tracking-widest text-white/40">Cast & Crew</div>
+                <div className="flex flex-wrap gap-2">
+                  {directors.map(d => typeof d === 'object' && d !== null ? (
+                    <div key={d.name} className="flex items-center gap-1.5 rounded-full bg-black/40 pr-2 backdrop-blur-md">
+                      {d.profileUrl ? <img src={d.profileUrl} alt={d.name} className="h-6 w-6 rounded-full object-cover border border-white/10" /> : <div className="h-6 w-6 rounded-full bg-white/20" />}
+                      <span className="text-[10px] font-medium text-white/90">{d.name} <span className="text-white/40">(Dir)</span></span>
+                    </div>
+                  ) : null)}
+                  {cast.slice(0, 3).map(c => typeof c === 'object' && c !== null ? (
+                    <div key={c.name} className="flex items-center gap-1.5 rounded-full bg-black/40 pr-2 backdrop-blur-md">
+                      {c.profileUrl ? <img src={c.profileUrl} alt={c.name} className="h-6 w-6 rounded-full object-cover border border-white/10" /> : <div className="h-6 w-6 rounded-full bg-white/20" />}
+                      <span className="text-[10px] font-medium text-white/90">{c.name}</span>
+                    </div>
+                  ) : null)}
+                  {stringPeople.slice(0, 3).map(p => (
+                    <div key={p} className="rounded-full bg-black/40 px-2 py-1 text-[10px] font-medium text-white/90 backdrop-blur-md">{p}</div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </PosterWrapper>
@@ -56,13 +91,17 @@ export default function ContentCard({ item, onSave, onDismiss, compact = false }
         
         {(onSave || onDismiss) && (
           <div className="grid grid-cols-[1fr_1fr_auto] gap-2 pt-2">
-            <button
-              onClick={() => onSave?.(item, 'saved')}
-              className="group/btn focus-ring relative flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-ice/10 px-3 py-2.5 text-xs font-bold text-ice transition-all hover:bg-ice hover:text-black hover:shadow-[0_0_15px_rgba(153,246,228,0.5)]"
+            <motion.button
+              onClick={handleSave}
+              whileTap={{ scale: 0.85 }}
+              animate={isSaved ? { scale: [1, 1.1, 1], backgroundColor: '#0ea5e9', color: '#ffffff' } : {}}
+              transition={{ duration: 0.3 }}
+              className={`group/btn focus-ring relative flex items-center justify-center gap-2 overflow-hidden rounded-xl px-3 py-2.5 text-xs font-bold transition-all ${isSaved ? 'bg-sky-500 text-white shadow-[0_0_20px_rgba(14,165,233,0.6)]' : 'bg-ice/10 text-ice hover:bg-ice hover:text-black hover:shadow-[0_0_15px_rgba(153,246,228,0.5)]'}`}
               aria-label="Save"
             >
-              <BookmarkPlus size={16} className="transition-transform group-hover/btn:scale-110" /> <span className="tracking-wide">Save</span>
-            </button>
+              <BookmarkPlus size={16} className={`transition-transform ${isSaved ? 'fill-current' : 'group-hover/btn:scale-110'}`} /> 
+              <span className="tracking-wide">{isSaved ? 'Saved' : 'Save'}</span>
+            </motion.button>
             <motion.button
               onClick={handleLove}
               whileTap={{ scale: 0.85 }}

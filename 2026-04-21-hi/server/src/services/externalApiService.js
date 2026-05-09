@@ -27,10 +27,10 @@ function hasUsableKey(value) {
   return Boolean(value && !value.includes('your_') && !value.includes('paste_') && value !== 'replace-me');
 }
 
-export async function fetchTrendingFromTMDB() {
+export async function fetchTrendingFromTMDB(page = 1) {
   if (!hasUsableKey(process.env.TMDB_API_KEY)) return [];
   const { data } = await tmdb.get('/trending/all/week', {
-    params: { api_key: process.env.TMDB_API_KEY }
+    params: { api_key: process.env.TMDB_API_KEY, page }
   });
   return (data.results || []).filter((item) => item.media_type !== 'person').slice(0, 40).map((item) => ({
     externalId: String(item.id),

@@ -61,6 +61,14 @@ export default function DetailsPage() {
               <div className="text-xs uppercase tracking-[0.16em] text-white/42">Popularity</div>
               <div className="mt-1 font-bold">{Math.round(content.popularity || 0)}</div>
             </div>
+            <div className="rounded-lg border border-white/10 bg-white/5 p-3 sm:col-span-2 xl:col-span-4">
+              <div className="text-xs uppercase tracking-[0.16em] text-white/42">Where to watch</div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {content.platforms?.length ? content.platforms.map((p) => (
+                  <span key={p} className="rounded bg-sky-500/20 px-2.5 py-1 text-sm font-bold text-sky-300">{p}</span>
+                )) : <span className="text-sm font-bold text-white/50">Not available on streaming</span>}
+              </div>
+            </div>
           </div>
           <div className="mt-6 flex flex-wrap gap-2">
             {content.genres?.map((genre) => <span key={genre} className="rounded-lg bg-white/8 px-3 py-2 text-sm text-white/70">{genre}</span>)}
@@ -78,13 +86,31 @@ export default function DetailsPage() {
           <div className="glass rounded-lg p-5">
             <div className="mb-3 flex items-center gap-2 font-bold"><Video size={18} /> Directors / creators</div>
             <div className="flex flex-wrap gap-2">
-              {(directors.length ? directors : ['Not listed']).map((name) => <span key={name} className="rounded bg-white/8 px-3 py-1.5 text-sm text-white/72">{name}</span>)}
+              {(directors.length ? directors : ['Not listed']).map((person) => {
+                const name = typeof person === 'object' && person !== null ? person.name : person;
+                const img = typeof person === 'object' && person !== null ? person.profileUrl : null;
+                return (
+                  <div key={name} className="flex items-center gap-2 rounded-full bg-white/8 pr-3">
+                    {img ? <img src={img} alt={name} className="h-8 w-8 rounded-full object-cover" /> : <div className="h-8 w-8 rounded-full bg-white/10" />}
+                    <span className="text-sm text-white/90">{name}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
           <div className="glass rounded-lg p-5 lg:col-span-2">
             <div className="mb-3 flex items-center gap-2 font-bold"><UsersRound size={18} /> Cast / key people</div>
             <div className="flex flex-wrap gap-2">
-              {(cast.length ? cast : content.people || ['Not listed']).slice(0, 12).map((name) => <span key={name} className="rounded bg-white/8 px-3 py-1.5 text-sm text-white/72">{name}</span>)}
+              {(cast.length ? cast : content.people || ['Not listed']).slice(0, 12).map((person) => {
+                const name = typeof person === 'object' && person !== null ? person.name : person;
+                const img = typeof person === 'object' && person !== null ? person.profileUrl : null;
+                return (
+                  <div key={name} className="flex items-center gap-2 rounded-full bg-white/8 pr-3">
+                    {img ? <img src={img} alt={name} className="h-8 w-8 rounded-full object-cover" /> : <div className="h-8 w-8 rounded-full bg-white/10" />}
+                    <span className="text-sm text-white/90">{name}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </>

@@ -13,6 +13,17 @@ import {
 import { getSimilarContent, updateUserFromInteraction } from '../services/recommendationService.js';
 import { buildContentVector } from '../utils/vector.js';
 import { getMovieDetails, searchUnifiedCatalog } from '../services/catalogService.js';
+import { fetchNewReleases } from '../services/tmdbService.js';
+
+export async function newReleases(req, res, next) {
+  try {
+    const items = await fetchNewReleases();
+    const imported = await upsertExternalItems(items);
+    res.json({ newReleases: imported });
+  } catch (error) {
+    next(error);
+  }
+}
 
 export async function listContent(req, res, next) {
   try {
@@ -83,13 +94,17 @@ export async function searchContent(req, res, next) {
 
 export async function trending(req, res, next) {
   try {
-    const { type = 'all' } = req.query;
+    const { type = 'all', page } = req.query;
+    const targetPage = parseInt(page) || Math.floor(Math.random() * 5) + 1;
     const [tmdbExternal, tvMazeExternal] = await Promise.all([
-      type === 'all' || type === 'movie' || type === 'tv' ? fetchTrendingFromTMDB().catch(() => []) : [],
+      type === 'all' || type === 'movie' || type === 'tv' ? fetchTrendingFromTMDB(targetPage).catch(() => []) : [],
       type === 'all' || type === 'tv' ? fetchTvMazeTrending().catch(() => []) : []
     ]);
     const external = [...tmdbExternal, ...tvMazeExternal];
-    if (external.length) await upsertExternalItems(external);
+    if (external.length) {
+      const imported = await upsertExternalItems(external);
+      return res.json({ trending: imported.sort((a, b) => b.popularity - a.popularity) });
+    }
     const filter = type === 'all' ? {} : { type };
     const local = await Content.find(filter).sort({ popularity: -1, rating: -1 }).limit(40);
     res.json({ trending: local });

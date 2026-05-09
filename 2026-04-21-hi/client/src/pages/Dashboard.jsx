@@ -12,17 +12,23 @@ const moods = ['happy', 'dark', 'thrilling', 'emotional', 'chill'];
 export default function Dashboard() {
   const [trending, setTrending] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
+  const [newReleases, setNewReleases] = useState([]);
   const [filters, setFilters] = useState({ mood: '', type: 'all', q: '' });
   const [loading, setLoading] = useState(false);
 
   async function load() {
     setLoading(true);
-    const [trendRes, recRes] = await Promise.all([
+    const [trendRes, recRes, newRes] = await Promise.all([
       api.get('/content/trending', { params: { type: filters.type } }),
-      api.get('/recommendations', { params: filters })
+      api.get('/recommendations', { params: filters }),
+      api.get('/content/new-releases')
     ]);
-    setTrending(trendRes.data.trending || []);
-    setRecommendations(recRes.data.data || []);
+    const shuffledTrend = [...(trendRes.data.trending || [])].sort(() => Math.random() - 0.5);
+    const shuffledRec = [...(recRes.data.data || [])].sort(() => Math.random() - 0.5);
+    const shuffledNew = [...(newRes.data.newReleases || [])].sort(() => Math.random() - 0.5);
+    setTrending(shuffledTrend);
+    setRecommendations(shuffledRec);
+    setNewReleases(shuffledNew);
     setLoading(false);
   }
 
@@ -32,8 +38,6 @@ export default function Dashboard() {
 
   async function save(item, status) {
     await saveContent(item, status);
-    setTrending((items) => items.filter((x) => x._id !== item._id));
-    setRecommendations((items) => items.filter((x) => x._id !== item._id));
   }
 
   async function dismiss(item) {
@@ -126,8 +130,21 @@ export default function Dashboard() {
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <AnimatePresence>
-            {trending.map((item) => (
+            {trending.slice(0, 8).map((item) => (
               <ContentCard key={`trend-${item._id}`} item={item} onSave={save} onDismiss={dismiss} />
+            ))}
+          </AnimatePresence>
+        </div>
+      </section>
+
+      <section className="mt-12">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <h2 className="text-2xl font-black text-rose-300">Recently Released</h2>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <AnimatePresence>
+            {newReleases.slice(0, 4).map((item) => (
+              <ContentCard key={`new-${item._id}`} item={item} onSave={save} onDismiss={dismiss} />
             ))}
           </AnimatePresence>
         </div>
@@ -139,7 +156,7 @@ export default function Dashboard() {
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <AnimatePresence>
-            {recommendations.map((item) => (
+            {recommendations.slice(0, 8).map((item) => (
               <ContentCard key={`rec-${item._id}`} item={item} onSave={save} onDismiss={dismiss} />
             ))}
           </AnimatePresence>
