@@ -6,7 +6,7 @@ import { searchOMDb, searchSpotify, searchTvMaze } from './externalApiService.js
 function dedupe(items) {
   const seen = new Set();
   return items.filter((item) => {
-    const key = `${item.source}:${item.externalId || item.title}:${item.type}`;
+    const key = item._id ? String(item._id) : `${item.source}:${item.externalId || item.title}:${item.type}`;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;

@@ -175,9 +175,17 @@ export async function searchTmdbCatalog(query) {
       results.sort((a, b) => b.popularity - a.popularity);
     } else {
       const data = await tmdbGet('/search/multi', { query, include_adult: false });
-      results = (data?.results || [])
-        .filter((item) => ['movie', 'tv'].includes(item.media_type))
-        .map((item) => normalizeTmdbItem(item, 'multi', item.media_type === 'tv' ? tvGenres : movieGenres));
+      results = (data?.results || []).flatMap((item) => {
+        if (item.media_type === 'person' && item.known_for) {
+          return item.known_for
+            .filter((kf) => ['movie', 'tv'].includes(kf.media_type))
+            .map((kf) => normalizeTmdbItem(kf, 'multi', kf.media_type === 'tv' ? tvGenres : movieGenres));
+        }
+        if (['movie', 'tv'].includes(item.media_type)) {
+          return [normalizeTmdbItem(item, 'multi', item.media_type === 'tv' ? tvGenres : movieGenres)];
+        }
+        return [];
+      });
     }
     
     return results.slice(0, 30);

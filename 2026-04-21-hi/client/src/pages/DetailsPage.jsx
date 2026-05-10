@@ -90,10 +90,10 @@ export default function DetailsPage() {
                 const name = typeof person === 'object' && person !== null ? person.name : person;
                 const img = typeof person === 'object' && person !== null ? person.profileUrl : null;
                 return (
-                  <div key={name} className="flex items-center gap-2 rounded-full bg-white/8 pr-3">
+                  <Link to={`/search?q=${encodeURIComponent(name)}`} key={name} className="flex items-center gap-2 rounded-full bg-white/8 pr-3 transition hover:bg-white/16">
                     {img ? <img src={img} alt={name} className="h-8 w-8 rounded-full object-cover" /> : <div className="h-8 w-8 rounded-full bg-white/10" />}
                     <span className="text-sm text-white/90">{name}</span>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
@@ -105,10 +105,10 @@ export default function DetailsPage() {
                 const name = typeof person === 'object' && person !== null ? person.name : person;
                 const img = typeof person === 'object' && person !== null ? person.profileUrl : null;
                 return (
-                  <div key={name} className="flex items-center gap-2 rounded-full bg-white/8 pr-3">
+                  <Link to={`/search?q=${encodeURIComponent(name)}`} key={name} className="flex items-center gap-2 rounded-full bg-white/8 pr-3 transition hover:bg-white/16">
                     {img ? <img src={img} alt={name} className="h-8 w-8 rounded-full object-cover" /> : <div className="h-8 w-8 rounded-full bg-white/10" />}
                     <span className="text-sm text-white/90">{name}</span>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
