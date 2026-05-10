@@ -71,7 +71,7 @@ export async function searchTMDB(query, type = 'multi') {
   }));
 }
 
-export async function discoverTMDB({ type = 'movie', genres = [], page = 1, mood } = {}) {
+export async function discoverTMDB({ type = 'movie', genres = [], page = 1, mood, provider } = {}) {
   if (!hasUsableKey(process.env.TMDB_API_KEY)) return [];
   const endpoint = type === 'tv' ? '/discover/tv' : '/discover/movie';
   const genreIds = genres.map((genre) => tmdbGenreIds[genre]).filter(Boolean);
@@ -83,7 +83,9 @@ export async function discoverTMDB({ type = 'movie', genres = [], page = 1, mood
       page,
       sort_by: moodSort,
       'vote_count.gte': 150,
-      with_genres: genreIds.join(',') || undefined
+      with_genres: genreIds.join(',') || undefined,
+      with_watch_providers: provider || undefined,
+      watch_region: provider ? 'IN' : undefined
     }
   });
   return (data.results || []).slice(0, 40).map((item) => ({

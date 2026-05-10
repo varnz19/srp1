@@ -142,6 +142,21 @@ export async function importExternalContent(req, res, next) {
   }
 }
 
+export async function byPlatform(req, res, next) {
+  try {
+    const { provider } = req.query;
+    const [movies, tvs] = await Promise.all([
+      discoverTMDB({ type: 'movie', provider }).catch(() => []),
+      discoverTMDB({ type: 'tv', provider }).catch(() => [])
+    ]);
+    const external = [...movies, ...tvs].sort((a, b) => b.popularity - a.popularity).slice(0, 8);
+    const imported = await upsertExternalItems(external);
+    res.json({ data: imported });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function updateWatchlist(req, res, next) {
   try {
     const { contentId, status = 'saved' } = req.body;

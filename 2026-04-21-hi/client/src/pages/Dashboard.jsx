@@ -13,22 +13,27 @@ export default function Dashboard() {
   const [trending, setTrending] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
   const [newReleases, setNewReleases] = useState([]);
+  const [netflix, setNetflix] = useState([]);
+  const [prime, setPrime] = useState([]);
   const [filters, setFilters] = useState({ mood: '', type: 'all', q: '' });
   const [loading, setLoading] = useState(false);
 
   async function load() {
     setLoading(true);
-    const [trendRes, recRes, newRes] = await Promise.all([
+    const [trendRes, recRes, newRes, nflx, amzn] = await Promise.all([
       api.get('/content/trending', { params: { type: filters.type } }),
       api.get('/recommendations', { params: filters }),
-      api.get('/content/new-releases')
+      api.get('/content/new-releases'),
+      api.get('/content/by-platform', { params: { provider: 8 } }),
+      api.get('/content/by-platform', { params: { provider: 119 } })
     ]);
-    const shuffledTrend = [...(trendRes.data.trending || [])].sort(() => Math.random() - 0.5);
     const shuffledRec = [...(recRes.data.data || [])].sort(() => Math.random() - 0.5);
     const shuffledNew = [...(newRes.data.newReleases || [])].sort(() => Math.random() - 0.5);
-    setTrending(shuffledTrend);
+    setTrending(trendRes.data.trending || []);
     setRecommendations(shuffledRec);
     setNewReleases(shuffledNew);
+    setNetflix(nflx.data.data || []);
+    setPrime(amzn.data.data || []);
     setLoading(false);
   }
 
@@ -130,7 +135,7 @@ export default function Dashboard() {
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <AnimatePresence>
-            {trending.slice(0, 8).map((item) => (
+            {trending.slice(0, 4).map((item) => (
               <ContentCard key={`trend-${item._id}`} item={item} onSave={save} onDismiss={dismiss} />
             ))}
           </AnimatePresence>
@@ -145,6 +150,32 @@ export default function Dashboard() {
           <AnimatePresence>
             {newReleases.slice(0, 4).map((item) => (
               <ContentCard key={`new-${item._id}`} item={item} onSave={save} onDismiss={dismiss} />
+            ))}
+          </AnimatePresence>
+        </div>
+      </section>
+
+      <section className="mt-12">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <h2 className="text-2xl font-black text-[#E50914]">Popular on Netflix</h2>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <AnimatePresence>
+            {netflix.slice(0, 4).map((item) => (
+              <ContentCard key={`nflx-${item._id}`} item={item} onSave={save} onDismiss={dismiss} />
+            ))}
+          </AnimatePresence>
+        </div>
+      </section>
+
+      <section className="mt-12">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <h2 className="text-2xl font-black text-[#00A8E1]">Popular on Prime Video</h2>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <AnimatePresence>
+            {prime.slice(0, 4).map((item) => (
+              <ContentCard key={`amzn-${item._id}`} item={item} onSave={save} onDismiss={dismiss} />
             ))}
           </AnimatePresence>
         </div>

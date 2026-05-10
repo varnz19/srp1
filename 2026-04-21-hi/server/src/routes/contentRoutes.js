@@ -8,7 +8,8 @@ import {
   searchContent,
   trending,
   updateWatchlist,
-  newReleases
+  newReleases,
+  byPlatform
 } from '../controllers/contentController.js';
 import { protect } from '../middleware/auth.js';
 
@@ -19,6 +20,7 @@ router.get('/search', protect, searchContent);
 router.get('/trending', protect, trending);
 router.get('/new-releases', protect, newReleases);
 router.get('/discover', protect, discoverContent);
+router.get('/by-platform', protect, byPlatform);
 router.post('/import', protect, importExternalContent);
 router.get('/watchlist', protect, getWatchlist);
 router.post('/watchlist', protect, updateWatchlist);

@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
-import { Clapperboard, LogIn } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import Button from '../components/Button.jsx';
+import Logo from '../components/Logo.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 
 export default function AuthPage() {
@@ -30,8 +31,8 @@ export default function AuthPage() {
           <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,107,53,0.28),transparent_45%),url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center opacity-80" />
           <div className="relative flex h-full flex-col justify-between">
             <div className="flex items-center gap-3 text-2xl font-black">
-              <span className="grid h-11 w-11 place-items-center rounded-lg bg-ember"><Clapperboard /></span>
-              &lt;CineSense/&gt;
+              <Logo className="h-11 w-11 drop-shadow-[0_0_20px_rgba(14,165,233,0.5)]" />
+              Solenne
             </div>
             <div>
               <h1 className="max-w-md text-4xl font-black leading-tight md:text-5xl">Entertainment discovery tuned to your mood.</h1>

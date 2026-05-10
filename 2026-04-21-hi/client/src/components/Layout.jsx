@@ -2,6 +2,7 @@ import { Dice5, Flame, Library, LogOut, Search, SmilePlus, Sparkles, UserRound }
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import Button from './Button.jsx';
+import Logo from './Logo.jsx';
 
 export default function Layout() {
   const { user, logout } = useAuth();
@@ -13,10 +14,8 @@ export default function Layout() {
       <header className="sticky top-0 z-30 border-b border-white/10 bg-ink/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <Link to="/" className="flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-lg bg-ember shadow-glow">
-              <Sparkles size={20} />
-            </span>
-            <span className="text-xl font-black tracking-wide">&lt;CineSense/&gt;</span>
+            <Logo className="h-10 w-10 drop-shadow-[0_0_15px_rgba(14,165,233,0.4)]" />
+            <span className="text-xl font-black tracking-wide">Solenne</span>
           </Link>
           <nav className="hidden items-center gap-2 md:flex">
             <NavLink to="/" className={navClass}>
