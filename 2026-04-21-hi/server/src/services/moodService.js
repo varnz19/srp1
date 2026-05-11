@@ -34,5 +34,5 @@ export function moodBoost(content, mood) {
   const genreHits = profile.genres.filter((g) => genres.has(g.toLowerCase())).length;
   const tagHits = profile.tags.filter((t) => tags.has(t.toLowerCase())).length;
   const avoidHits = profile.avoid.filter((t) => tags.has(t.toLowerCase())).length;
-  return genreHits * 0.08 + tagHits * 0.05 - avoidHits * 0.07;
+  return genreHits * 0.45 + tagHits * 0.25 - avoidHits * 0.5;
 }

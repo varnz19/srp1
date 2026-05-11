@@ -21,11 +21,33 @@ export default function MoodPage() {
   const [loading, setLoading] = useState(false);
 
   async function load(nextMood = mood, nextType = type) {
+    setItems([]);
     setLoading(true);
-    await api.get('/content/discover', { params: { mood: nextMood, type: nextType, page: Math.ceil(Math.random() * 5) } });
-    const { data } = await api.get('/recommendations', { params: { mood: nextMood, type: nextType, limit: 32 } });
-    setItems(data.data || []);
-    setLoading(false);
+    try {
+      const [discResp, recResp] = await Promise.all([
+        api.get('/content/discover', { params: { mood: nextMood, type: nextType, page: Math.ceil(Math.random() * 12) } }),
+        api.get('/recommendations', { params: { mood: nextMood, type: nextType, limit: 40 } })
+      ]);
+      
+      const recs = recResp.data.data || [];
+      const disc = discResp.data.content || [];
+      const recIds = new Set(recs.map(r => r._id));
+      
+      // Interleave results: 2 recommendations, then 2 discovered, etc.
+      const interleaved = [];
+      const discUnique = disc.filter(item => !recIds.has(item._id));
+      
+      for (let i = 0; i < 20; i++) {
+        if (recs[i]) interleaved.push(recs[i]);
+        if (discUnique[i]) interleaved.push(discUnique[i]);
+      }
+      
+      setItems(interleaved.slice(0, 40));
+    } catch (err) {
+      console.error('Mood error:', err);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {

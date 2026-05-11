@@ -20,6 +20,7 @@ const contentSchema = new mongoose.Schema(
     directors: [mongoose.Schema.Types.Mixed],
     cast: [mongoose.Schema.Types.Mixed],
         platforms: [String],
+    watchUrl: String,
     language: String,
     vector: { type: Map, of: Number, default: {} },
     raw: Object

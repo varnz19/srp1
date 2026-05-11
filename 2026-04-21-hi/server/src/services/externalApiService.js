@@ -76,6 +76,16 @@ export async function discoverTMDB({ type = 'movie', genres = [], page = 1, mood
   const endpoint = type === 'tv' ? '/discover/tv' : '/discover/movie';
   const genreIds = genres.map((genre) => tmdbGenreIds[genre]).filter(Boolean);
   const moodSort = mood === 'thrilling' || mood === 'happy' ? 'popularity.desc' : 'vote_average.desc';
+  const moodGenreMap = {
+    happy: [35, 16, 12, 10751],
+    dark: [27, 80, 53],
+    thrilling: [28, 53, 9648],
+    emotional: [18, 10749],
+    chill: [99, 35, 10402]
+  };
+  const moodGenres = moodGenreMap[mood] || [];
+  const combinedGenres = [...new Set([...genreIds, ...moodGenres])];
+
   const { data } = await tmdb.get(endpoint, {
     params: {
       api_key: process.env.TMDB_API_KEY,
@@ -83,7 +93,7 @@ export async function discoverTMDB({ type = 'movie', genres = [], page = 1, mood
       page,
       sort_by: moodSort,
       'vote_count.gte': 150,
-      with_genres: genreIds.join(',') || undefined,
+      with_genres: combinedGenres.join(',') || undefined,
       with_watch_providers: provider || undefined,
       watch_region: provider ? 'IN' : undefined
     }

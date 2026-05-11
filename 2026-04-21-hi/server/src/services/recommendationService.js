@@ -102,7 +102,7 @@ export async function getRecommendations(user, { mood, type, limit = 24, query }
   if (query) filter.$text = { $search: query };
 
   const [contents, saved, behavior, collaborative] = await Promise.all([
-    Content.find(filter).limit(200),
+    Content.find(filter).sort({ popularity: -1, rating: -1 }).limit(400),
     Watchlist.find({ user: user._id }),
     behaviorScores(user._id),
     collaborativeScores(user._id)

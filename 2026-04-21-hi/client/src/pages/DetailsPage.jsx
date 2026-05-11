@@ -1,4 +1,4 @@
-import { ArrowLeft, Bookmark, CheckCircle, Heart, Mic2, UsersRound, Video } from 'lucide-react';
+import { ArrowLeft, Bookmark, CheckCircle, Heart, Mic2, UsersRound, Video, ExternalLink } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Button from '../components/Button.jsx';
@@ -30,6 +30,20 @@ export default function DetailsPage() {
   const directors = content.directors?.length ? content.directors : (content.people || []).slice(0, 1);
   const cast = content.cast?.length ? content.cast : (content.people || []).slice(1);
   
+
+  const getDirectLink = () => {
+    if (!content.platforms?.length) return content.watchUrl;
+    const p = content.platforms[0];
+    const title = encodeURIComponent(content.title);
+    if (p.toLowerCase().includes('netflix')) return `https://www.netflix.com/search?q=${title}`;
+    if (p.toLowerCase().includes('prime')) return `https://www.primevideo.com/search?phrase=${title}`;
+    if (p.toLowerCase().includes('hotstar') || p.toLowerCase().includes('disney')) return `https://www.hotstar.com/in/search?q=${title}`;
+    if (p.toLowerCase().includes('jio')) return `https://www.jiocinema.com/search/${title}`;
+    if (p.toLowerCase().includes('zee5')) return `https://www.zee5.com/search?q=${title}`;
+    if (p.toLowerCase().includes('sony')) return `https://www.sonyliv.com/search/${title}`;
+    if (p.toLowerCase().includes('apple')) return `https://tv.apple.com/search?term=${title}`;
+    return content.watchUrl;
+  };
 
   return (
     <div className="space-y-8">
@@ -64,9 +78,28 @@ export default function DetailsPage() {
             <div className="rounded-lg border border-white/10 bg-white/5 p-3 sm:col-span-2 xl:col-span-4">
               <div className="text-xs uppercase tracking-[0.16em] text-white/42">Where to watch</div>
               <div className="mt-2 flex flex-wrap gap-2">
-                {content.platforms?.length ? content.platforms.map((p) => (
-                  <span key={p} className="rounded bg-sky-500/20 px-2.5 py-1 text-sm font-bold text-sky-300">{p}</span>
-                )) : <span className="text-sm font-bold text-white/50">Not available on streaming</span>}
+                {content.platforms?.length ? content.platforms.map((p) => {
+                  const title = encodeURIComponent(content.title);
+                  let url = '';
+                  if (p.toLowerCase().includes('netflix')) url = `https://www.netflix.com/search?q=${title}`;
+                  else if (p.toLowerCase().includes('prime')) url = `https://www.primevideo.com/search?phrase=${title}`;
+                  else if (p.toLowerCase().includes('hotstar') || p.toLowerCase().includes('disney')) url = `https://www.hotstar.com/in/search?q=${title}`;
+                  else if (p.toLowerCase().includes('jio')) url = `https://www.jiocinema.com/search/${title}`;
+                  else if (p.toLowerCase().includes('zee5')) url = `https://www.zee5.com/search?q=${title}`;
+                  else if (p.toLowerCase().includes('sony')) url = `https://www.sonyliv.com/search/${title}`;
+                  else if (p.toLowerCase().includes('apple')) url = `https://tv.apple.com/search?term=${title}`;
+                  
+                  if (url) {
+                    return (
+                      <a key={p} href={url} target="_blank" rel="noopener noreferrer" className="rounded bg-sky-500/20 px-2.5 py-1 text-sm font-bold text-sky-300 hover:bg-sky-500/40 transition">
+                        {p}
+                      </a>
+                    );
+                  }
+                  return (
+                    <span key={p} className="rounded bg-white/10 px-2.5 py-1 text-sm font-bold text-white/60">{p}</span>
+                  );
+                }) : <span className="text-sm font-bold text-white/50">Not available on streaming</span>}
               </div>
             </div>
           </div>
@@ -74,6 +107,11 @@ export default function DetailsPage() {
             {content.genres?.map((genre) => <span key={genre} className="rounded-lg bg-white/8 px-3 py-2 text-sm text-white/70">{genre}</span>)}
           </div>
           <div className="mt-8 flex flex-wrap gap-3">
+            {(content.watchUrl || content.platforms?.length > 0) && (
+              <Button onClick={() => window.open(getDirectLink(), '_blank')} className="bg-sky-600 hover:bg-sky-700 shadow-lg shadow-sky-600/20">
+                <ExternalLink size={18} /> Watch Now
+              </Button>
+            )}
             <Button onClick={() => status('saved')}><Bookmark size={18} /> Save</Button>
             <Button variant="secondary" onClick={() => status('favorite')}><Heart size={18} /> Favorite</Button>
             <Button variant="secondary" onClick={() => status('completed')}><CheckCircle size={18} /> Completed</Button>

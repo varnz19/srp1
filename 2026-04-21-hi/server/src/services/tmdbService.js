@@ -73,6 +73,7 @@ function normalizeTmdbDetails(details, credits, videos, providers, type) {
   const inFree = (providers?.results?.IN?.free || []).map(p => p.provider_name);
   const usProviders = (providers?.results?.US?.flatrate || []).map(p => p.provider_name);
   const providerNames = [...new Set([...inProviders, ...inFree, ...usProviders])].filter(Boolean);
+  const watchUrl = providers?.results?.IN?.link || providers?.results?.US?.link || '';
 
   return {
     externalId: String(details.id),
@@ -93,6 +94,7 @@ function normalizeTmdbDetails(details, credits, videos, providers, type) {
     directors,
     cast,
     platforms: [...new Set(providerNames)],
+    watchUrl,
     language: details.original_language,
     raw: { details, credits, videos, providers }
   };
