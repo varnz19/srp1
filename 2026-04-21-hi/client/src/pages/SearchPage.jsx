@@ -47,7 +47,7 @@ export default function SearchPage() {
   return (
     <div>
       <PageHeader eyebrow="Search" title="Find exactly what you want">
-        Query search uses intent matching first, then falls back to the stored catalog when no model key is available.
+        Discover content with intent-aware search, leveraging deep metadata to find the perfect match for your specific vibe.
       </PageHeader>
       <form onSubmit={submit} className="glass mb-7 grid gap-3 rounded-lg p-4 md:grid-cols-[1fr_160px_auto_auto]">
         <div className="relative">

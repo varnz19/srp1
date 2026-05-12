@@ -55,7 +55,7 @@ export default function TrendingPage() {
     <div>
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <PageHeader eyebrow="Live pulse" title="Trending now">
-          Pulls live titles from public sources now, uses TMDB when you add a key, and stores them locally so recommendations keep learning.
+          Explore real-time cinematic trends and high-engagement releases, curated through cross-platform behavioral intelligence.
         </PageHeader>
         <Button variant="secondary" onClick={load} disabled={loading}>
           <RefreshCw size={17} /> Refresh

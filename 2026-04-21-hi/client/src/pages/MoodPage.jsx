@@ -62,7 +62,7 @@ export default function MoodPage() {
   return (
     <div>
       <PageHeader eyebrow="Mood browser" title="What are you in the mood for?">
-        Pick a vibe first, then browse recommendations shaped by your profile and behavior.
+        Synchronize your discovery experience with your current energy level through our specialized emotional-intent matching engine.
       </PageHeader>
       <section className="mb-7 grid gap-3 md:grid-cols-5">
         {moods.map((entry) => {

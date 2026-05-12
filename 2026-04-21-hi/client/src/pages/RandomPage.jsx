@@ -35,7 +35,7 @@ export default function RandomPage() {
   return (
     <div>
       <PageHeader eyebrow="Surprise" title="Pick something for me">
-        One tap, one recommendation. Reroll until something feels right.
+        A curated single-point discovery path. Refresh until our engine aligns with your immediate preference.
       </PageHeader>
       <div className="mb-6 flex flex-wrap items-center gap-2">
         <select className="focus-ring rounded-lg border border-white/10 bg-panel px-3 py-2 text-sm" value={type} onChange={(event) => { setType(event.target.value); loadRandom({ type: event.target.value }); }}>
@@ -58,7 +58,7 @@ export default function RandomPage() {
           <div className="flex items-center gap-2 text-lg font-black"><Shuffle size={20} /> Tonight's random pick</div>
           <p className="mt-4 text-lg leading-8 text-white/72">{copy || 'Loading a random recommendation...'}</p>
           <div className="mt-6 inline-flex items-center gap-2 rounded-lg bg-white/8 px-3 py-2 text-sm text-white/62">
-            <Dice5 size={16} /> Uses your preferences, behavior, and a bit of luck.
+            <Dice5 size={16} /> Synthesizing historical preference vectors and behavioral signals for a precision-randomized match.
           </div>
         </section>
       </div>
