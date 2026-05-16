@@ -64,6 +64,8 @@ score = cosine + behavior + mood + collaborative + trending
 solenne/
 
 │── client/ Frontend application (React)
+
+
 │── server/ Backend application (Node.js)
 
 ---
