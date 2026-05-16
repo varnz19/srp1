@@ -37,9 +37,7 @@ Users often spend significant time deciding what to watch due to generic recomme
 
 ### Integrations
 
-- TMDB API  
-- Spotify API  
-- OpenAI API  
+- TMDB API   
 
 ---
 
@@ -64,6 +62,7 @@ score = cosine + behavior + mood + collaborative + trending
 
 ## Project Structure
 solenne/
+
 │── client/ Frontend application (React)
 │── server/ Backend application (Node.js)
 
